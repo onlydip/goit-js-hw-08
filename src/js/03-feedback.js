@@ -16,31 +16,43 @@ populateForm();
 function onFormSubmit(e) {
   e.preventDefault();
 
-  if (textareaEl.value === '' || inputEl.value === '') {
-    return alert('Enter something');
+  try {
+    if (textareaEl.value === '' || inputEl.value === '') {
+      throw new Error('Enter something else');
+    }
+
+    console.log(formData);
+
+    e.currentTarget.reset();
+    localStorage.removeItem(STORAGE_KEY);
+    formData = {};
+  } catch (error) {
+    alert(error.message);
   }
-
-  console.log(formData);
-
-  e.currentTarget.reset();
-  localStorage.removeItem(STORAGE_KEY);
-  formData = {};
 }
+
 function onFormInput(e) {
   formData[e.target.name] = e.target.value;
   localStorage.setItem(STORAGE_KEY, JSON.stringify(formData));
 }
 
 function populateForm() {
-  const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY));
+  try {
+    const savedData = JSON.parse(localStorage.getItem(STORAGE_KEY));
 
-  if (savedData.email) {
-    inputEl.value = savedData.email;
-    formData.email = savedData.email;
-  }
+    if (savedData && savedData.email) {
+      inputEl.value = savedData.email;
+      formData.email = savedData.email;
+    }
 
-  if (savedData.message) {
-    textareaEl.value = savedData.message;
-    formData.message = savedData.message;
+    if (savedData && savedData.message) {
+      textareaEl.value = savedData.message;
+      formData.message = savedData.message;
+    }
+  } catch (error) {
+    console.error(error);
   }
 }
+
+// console.log(populateForm)
+//    console.log(formData);
